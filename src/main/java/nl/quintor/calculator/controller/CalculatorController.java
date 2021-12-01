@@ -1,6 +1,7 @@
 package nl.quintor.calculator.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.quintor.calculator.controller.dto.CalculateDTO;
 import nl.quintor.calculator.controller.dto.CalculationResultDTO;
 import nl.quintor.calculator.model.CalculationAction;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("calculate")
 @AllArgsConstructor
+@Slf4j
 public class CalculatorController {
 
     private SimpleCalculator simpleCalculator;
@@ -29,6 +31,7 @@ public class CalculatorController {
         int value1 = values.getValue1();
         int value2 = values.getValue2();
         CalculationAction action = values.getAction();
+        log.info("Calculate called with {}, {} and action {}", value1, value2, action.name());
 
         CalculationResult result = null;
         switch (action) {
@@ -45,11 +48,13 @@ public class CalculatorController {
                 result = simpleCalculator.divide(value1, value2);
                 break;
         }
+        log.info("Result is {}", result.getResult());
         return ResponseEntity.ok(new CalculationResultDTO(result));
     }
 
     @GetMapping
     public ResponseEntity<List<CalculationResultDTO>> getHistory() {
+        log.info("Accessing historic calculation data");
         List<CalculationResultDTO> result = new ArrayList<>();
         simpleCalculator.getHistory().forEach(r -> result.add(new CalculationResultDTO(r)));
         return ResponseEntity.ok(result);
