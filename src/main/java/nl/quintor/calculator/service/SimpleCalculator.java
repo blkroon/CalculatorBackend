@@ -17,39 +17,35 @@ public class SimpleCalculator {
 
     private CalculationResultRepository calculationResultRepository;
 
-    public double add(int value1, int value2) {
+    public CalculationResult add(int value1, int value2) {
         double result = (double) value1 + (double) value2;
-        save(result, value1, value2, CalculationAction.ADD);
-        return result;
+        return save(result, value1, value2, CalculationAction.ADD);
     }
 
-    public double subtract(int value1, int value2) {
+    public CalculationResult subtract(int value1, int value2) {
         double result = (double) value1 - (double) value2;
-        save(result, value1, value2, CalculationAction.SUBTRACT);
-        return result;
+        return save(result, value1, value2, CalculationAction.SUBTRACT);
     }
 
-    public double multiply(int value1, int value2) {
+    public CalculationResult multiply(int value1, int value2) {
         double result = (double) value1 * (double) value2;
-        save(result, value1, value2, CalculationAction.MULTIPLY);
-        return result;
+        return save(result, value1, value2, CalculationAction.MULTIPLY);
     }
 
-    public double divide(int value1, int value2) {
+    public CalculationResult divide(int value1, int value2) {
         if (value2 == 0) {
             throw new InvalidCalculation("Can't divide by zero");
         }
         double result = (double) value1 / (double) value2;
-        save(result, value1, value2, CalculationAction.DIVIDE);
-        return result;
+        return save(result, value1, value2, CalculationAction.DIVIDE);
     }
 
     public List<CalculationResult> getHistory() {
         return calculationResultRepository.findAll(Sort.by(Sort.Direction.DESC, "timeOfCalculation"));
     }
 
-    private void save(double result, int value1, int value2, CalculationAction action) {
+    private CalculationResult save(double result, int value1, int value2, CalculationAction action) {
         CalculationResult calculationResult = new CalculationResult(result, value1, value2, action, LocalDateTime.now());
-        calculationResultRepository.save(calculationResult);
+        return calculationResultRepository.save(calculationResult);
     }
 }

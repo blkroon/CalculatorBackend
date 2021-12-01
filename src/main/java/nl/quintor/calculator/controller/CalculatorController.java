@@ -1,7 +1,8 @@
 package nl.quintor.calculator.controller;
 
 import lombok.AllArgsConstructor;
-import nl.quintor.calculator.controller.dto.ValuesDTO;
+import nl.quintor.calculator.controller.dto.CalculateDTO;
+import nl.quintor.calculator.model.CalculationAction;
 import nl.quintor.calculator.model.CalculationResult;
 import nl.quintor.calculator.service.SimpleCalculator;
 import org.springframework.http.ResponseEntity;
@@ -20,27 +21,27 @@ public class CalculatorController {
 
     private SimpleCalculator simpleCalculator;
 
-    @PostMapping("/add")
-    public ResponseEntity<Double> add(@RequestBody ValuesDTO values) {
-        double result = simpleCalculator.add(values.getValue1(), values.getValue2());
-        return ResponseEntity.ok(result);
-    }
+    @PostMapping
+    public ResponseEntity<CalculationResult> calculate(@RequestBody CalculateDTO values) {
+        int value1 = values.getValue1();
+        int value2 = values.getValue2();
+        CalculationAction action = values.getAction();
 
-    @PostMapping("/subtract")
-    public ResponseEntity<Double> subtract(@RequestBody ValuesDTO values) {
-        double result = simpleCalculator.subtract(values.getValue1(), values.getValue2());
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("/multiply")
-    public ResponseEntity<Double> multiply(@RequestBody ValuesDTO values) {
-        double result = simpleCalculator.multiply(values.getValue1(), values.getValue2());
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("/divide")
-    public ResponseEntity<Double> divide(@RequestBody ValuesDTO values) {
-        double result = simpleCalculator.divide(values.getValue1(), values.getValue2());
+        CalculationResult result = null;
+        switch (action) {
+            case ADD:
+                result = simpleCalculator.add(value1, value2);
+                break;
+            case SUBTRACT:
+                result = simpleCalculator.subtract(value1, value2);
+                break;
+            case MULTIPLY:
+                result = simpleCalculator.multiply(value1, value2);
+                break;
+            case DIVIDE:
+                result = simpleCalculator.divide(value1, value2);
+                break;
+        }
         return ResponseEntity.ok(result);
     }
 

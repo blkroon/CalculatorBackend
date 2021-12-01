@@ -6,6 +6,7 @@ import nl.quintor.calculator.model.CalculationResult;
 import nl.quintor.calculator.repository.CalculationResultRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,11 +38,15 @@ public class SimpleCalculatorTest {
         int value2 = 2;
         double expectedResult = 7.0;
 
-        when(calculationResultRepository.save(any())).thenReturn(new CalculationResult());
+        when(calculationResultRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 
-        double result = simpleCalculator.add(value1, value2);
+        CalculationResult result = simpleCalculator.add(value1, value2);
 
-        assertThat(result, is(expectedResult));
+        assertThat(result.getResult(), is(expectedResult));
+        assertThat(result.getValue1(), is((double) value1));
+        assertThat(result.getValue2(), is((double) value2));
+        assertThat(result.getAction(), is(CalculationAction.ADD));
+
         verify(calculationResultRepository, times(1)).save(any());
     }
 
@@ -51,11 +56,15 @@ public class SimpleCalculatorTest {
         int value2 = 2;
         double expectedResult = 3.0;
 
-        when(calculationResultRepository.save(any())).thenReturn(new CalculationResult());
+        when(calculationResultRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 
-        double result = simpleCalculator.subtract(value1, value2);
+        CalculationResult result = simpleCalculator.subtract(value1, value2);
 
-        assertThat(result, is(expectedResult));
+        assertThat(result.getResult(), is(expectedResult));
+        assertThat(result.getValue1(), is((double) value1));
+        assertThat(result.getValue2(), is((double) value2));
+        assertThat(result.getAction(), is(CalculationAction.SUBTRACT));
+
         verify(calculationResultRepository, times(1)).save(any());
     }
 
@@ -65,11 +74,15 @@ public class SimpleCalculatorTest {
         int value2 = 2;
         double expectedResult = 10.0;
 
-        when(calculationResultRepository.save(any())).thenReturn(new CalculationResult());
+        when(calculationResultRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 
-        double result = simpleCalculator.multiply(value1, value2);
+        CalculationResult result = simpleCalculator.multiply(value1, value2);
 
-        assertThat(result, is(expectedResult));
+        assertThat(result.getResult(), is(expectedResult));
+        assertThat(result.getValue1(), is((double) value1));
+        assertThat(result.getValue2(), is((double) value2));
+        assertThat(result.getAction(), is(CalculationAction.MULTIPLY));
+
         verify(calculationResultRepository, times(1)).save(any());
     }
 
@@ -79,11 +92,15 @@ public class SimpleCalculatorTest {
         int value2 = 2;
         double expectedResult = 2.5;
 
-        when(calculationResultRepository.save(any())).thenReturn(new CalculationResult());
+        when(calculationResultRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 
-        double result = simpleCalculator.divide(value1, value2);
+        CalculationResult result = simpleCalculator.divide(value1, value2);
 
-        assertThat(result, is(expectedResult));
+        assertThat(result.getResult(), is(expectedResult));
+        assertThat(result.getValue1(), is((double) value1));
+        assertThat(result.getValue2(), is((double) value2));
+        assertThat(result.getAction(), is(CalculationAction.DIVIDE));
+
         verify(calculationResultRepository, times(1)).save(any());
     }
 

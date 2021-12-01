@@ -1,6 +1,8 @@
 package nl.quintor.calculator.controller;
 
 import nl.quintor.calculator.controller.exception.InvalidCalculation;
+import nl.quintor.calculator.model.CalculationAction;
+import nl.quintor.calculator.model.CalculationResult;
 import nl.quintor.calculator.service.SimpleCalculator;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,18 +34,16 @@ public class CalculatorControllerTest {
     void addTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
-        Double result = 7.0;
 
-        when(simpleCalculator.add(value1, value2)).thenReturn(result);
+        when(simpleCalculator.add(value1, value2)).thenReturn(new CalculationResult());
 
-        var response = this.mockMvc.perform(post("/calculate/add")
+        this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
                                 "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + "\n" +
+                                "    \"value2\": " + value2 + ",\n" +
+                                "    \"action\": \"" + CalculationAction.ADD + "\"\n" +
                                 "}")).andExpect(status().isOk())
                 .andReturn().getResponse();
-
-        assertThat(response.getContentAsString(), is(result.toString()));
 
         verify(simpleCalculator, times(1)).add(value1, value2);
     }
@@ -54,18 +52,16 @@ public class CalculatorControllerTest {
     void subtractTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
-        Double result = 3.0;
 
-        when(simpleCalculator.subtract(value1, value2)).thenReturn(result);
+        when(simpleCalculator.subtract(value1, value2)).thenReturn(new CalculationResult());
 
-        var response = this.mockMvc.perform(post("/calculate/subtract")
+        this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
                                 "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + "\n" +
+                                "    \"value2\": " + value2 + ",\n" +
+                                "    \"action\": \"" + CalculationAction.SUBTRACT + "\"\n" +
                                 "}")).andExpect(status().isOk())
                 .andReturn().getResponse();
-
-        assertThat(response.getContentAsString(), is(result.toString()));
 
         verify(simpleCalculator, times(1)).subtract(value1, value2);
     }
@@ -74,18 +70,16 @@ public class CalculatorControllerTest {
     void multiplyTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
-        Double result = 10.0;
 
-        when(simpleCalculator.multiply(value1, value2)).thenReturn(result);
+        when(simpleCalculator.multiply(value1, value2)).thenReturn(new CalculationResult());
 
-        var response = this.mockMvc.perform(post("/calculate/multiply")
+        this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
                                 "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + "\n" +
+                                "    \"value2\": " + value2 + ",\n" +
+                                "    \"action\": \"" + CalculationAction.MULTIPLY + "\"\n" +
                                 "}")).andExpect(status().isOk())
                 .andReturn().getResponse();
-
-        assertThat(response.getContentAsString(), is(result.toString()));
 
         verify(simpleCalculator, times(1)).multiply(value1, value2);
     }
@@ -96,16 +90,15 @@ public class CalculatorControllerTest {
         int value2 = 2;
         Double result = 2.5;
 
-        when(simpleCalculator.divide(value1, value2)).thenReturn(result);
+        when(simpleCalculator.divide(value1, value2)).thenReturn(new CalculationResult());
 
-        var response = this.mockMvc.perform(post("/calculate/divide")
+        this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
                                 "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + "\n" +
+                                "    \"value2\": " + value2 + ",\n" +
+                                "    \"action\": \"" + CalculationAction.DIVIDE + "\"\n" +
                                 "}")).andExpect(status().isOk())
                 .andReturn().getResponse();
-
-        assertThat(response.getContentAsString(), is(result.toString()));
 
         verify(simpleCalculator, times(1)).divide(value1, value2);
     }
@@ -117,10 +110,11 @@ public class CalculatorControllerTest {
 
         when(simpleCalculator.divide(value1, value2)).thenThrow(new InvalidCalculation("Cannot divide by zero"));
 
-        var response = this.mockMvc.perform(post("/calculate/divide")
+        this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
                                 "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + "\n" +
+                                "    \"value2\": " + value2 + ",\n" +
+                                "    \"action\": \"" + CalculationAction.DIVIDE + "\"\n" +
                                 "}")).andExpect(status().isBadRequest())
                 .andReturn().getResponse();
 
