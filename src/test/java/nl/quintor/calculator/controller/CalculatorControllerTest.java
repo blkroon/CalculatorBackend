@@ -1,5 +1,8 @@
 package nl.quintor.calculator.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import nl.quintor.calculator.controller.dto.CalculationResultDTO;
 import nl.quintor.calculator.controller.exception.InvalidCalculation;
 import nl.quintor.calculator.model.CalculationAction;
@@ -15,10 +18,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,7 +42,7 @@ public class CalculatorControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void addTest() throws Exception {
+    void calculate_addTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
 
@@ -52,7 +60,7 @@ public class CalculatorControllerTest {
     }
 
     @Test
-    void subtractTest() throws Exception {
+    void calculate_subtractTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
 
@@ -70,7 +78,7 @@ public class CalculatorControllerTest {
     }
 
     @Test
-    void multiplyTest() throws Exception {
+    void calculate_multiplyTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
 
@@ -88,10 +96,10 @@ public class CalculatorControllerTest {
     }
 
     @Test
-    void divideTest() throws Exception {
+    void calculate_divideTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
-        Double result = 2.5;
+        double result = 2.5;
 
         when(simpleCalculator.divide(value1, value2)).thenReturn(new CalculationResult(result, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
 
@@ -107,7 +115,7 @@ public class CalculatorControllerTest {
     }
 
     @Test
-    void divide_DivideByZero_ShouldThrowExceptionTest() throws Exception {
+    void calculate_divide_DivideByZero_ShouldThrowExceptionTest() throws Exception {
         int value1 = 5;
         int value2 = 2;
 
@@ -122,5 +130,24 @@ public class CalculatorControllerTest {
                 .andReturn().getResponse();
 
         verify(simpleCalculator, times(1)).divide(value1, value2);
+    }
+
+    @Test
+    void getHistoryTest() throws Exception {
+        List<CalculationResult> mockList = new ArrayList<>();
+        mockList.add(new CalculationResult(1, 2, 1, 1, CalculationAction.ADD, LocalDateTime.now()));
+        mockList.add(new CalculationResult(1, 1, 2, 1, CalculationAction.SUBTRACT, LocalDateTime.now()));
+
+        when(simpleCalculator.getHistory()).thenReturn(mockList);
+
+        var response = this.mockMvc.perform(get("/calculate")).andExpect(status().isOk())
+                .andReturn().getResponse();
+
+        ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+
+        CalculationResultDTO[] result = mapper.readValue(response.getContentAsString(), CalculationResultDTO[].class);
+
+        assertThat(result[0], is(new CalculationResultDTO(mockList.get(0))));
+        assertThat(result[1], is(new CalculationResultDTO(mockList.get(1))));
     }
 }

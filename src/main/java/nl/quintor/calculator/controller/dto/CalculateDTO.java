@@ -8,9 +8,9 @@ import javax.validation.constraints.NotNull;
 @Data
 public class CalculateDTO {
     @NotNull
-    private int value1;
+    private Integer value1;
     @NotNull
-    private int value2;
+    private Integer value2;
     @NotNull
     private CalculationAction action;
 }
