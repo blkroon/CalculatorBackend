@@ -18,6 +18,8 @@ public class CalculatorService {
     private CalculationResultRepository calculationResultRepository;
 
     public CalculationResult calculate(double value1, double value2, CalculationOperation operation) {
+//        Math.floor()
+        CalculationResult calculationResult;
         switch (operation) {
             case ADD:
                 return this.add(value1, value2);
@@ -34,17 +36,17 @@ public class CalculatorService {
 
     public CalculationResult add(double value1, double value2) {
         double result = value1 + value2;
-        return save(result, value1, value2, CalculationOperation.ADD);
+        return save((double) Math.round(result * 100) / 100, value1, value2, CalculationOperation.ADD);
     }
 
     public CalculationResult subtract(double value1, double value2) {
         double result = value1 - value2;
-        return save(result, value1, value2, CalculationOperation.SUBTRACT);
+        return save((double) Math.round(result * 100) / 100, value1, value2, CalculationOperation.SUBTRACT);
     }
 
     public CalculationResult multiply(double value1, double value2) {
         double result = value1 * value2;
-        return save(result, value1, value2, CalculationOperation.MULTIPLY);
+        return save((double) Math.round(result * 100) / 100, value1, value2, CalculationOperation.MULTIPLY);
     }
 
     public CalculationResult divide(double value1, double value2) {
