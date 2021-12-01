@@ -2,6 +2,7 @@ package nl.quintor.calculator.controller;
 
 import lombok.AllArgsConstructor;
 import nl.quintor.calculator.controller.dto.CalculateDTO;
+import nl.quintor.calculator.controller.dto.CalculationResultDTO;
 import nl.quintor.calculator.model.CalculationAction;
 import nl.quintor.calculator.model.CalculationResult;
 import nl.quintor.calculator.service.SimpleCalculator;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,7 +24,7 @@ public class CalculatorController {
     private SimpleCalculator simpleCalculator;
 
     @PostMapping
-    public ResponseEntity<CalculationResult> calculate(@RequestBody CalculateDTO values) {
+    public ResponseEntity<CalculationResultDTO> calculate(@RequestBody CalculateDTO values) {
         int value1 = values.getValue1();
         int value2 = values.getValue2();
         CalculationAction action = values.getAction();
@@ -42,11 +44,13 @@ public class CalculatorController {
                 result = simpleCalculator.divide(value1, value2);
                 break;
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(new CalculationResultDTO(result));
     }
 
     @GetMapping
-    public ResponseEntity<List<CalculationResult>> getHistory() {
-        return ResponseEntity.ok(simpleCalculator.getHistory());
+    public ResponseEntity<List<CalculationResultDTO>> getHistory() {
+        List<CalculationResultDTO> result = new ArrayList<>();
+        simpleCalculator.getHistory().forEach(r -> result.add(new CalculationResultDTO(r)));
+        return ResponseEntity.ok(result);
     }
 }

@@ -1,5 +1,6 @@
 package nl.quintor.calculator.controller;
 
+import nl.quintor.calculator.controller.dto.CalculationResultDTO;
 import nl.quintor.calculator.controller.exception.InvalidCalculation;
 import nl.quintor.calculator.model.CalculationAction;
 import nl.quintor.calculator.model.CalculationResult;
@@ -12,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,7 +38,7 @@ public class CalculatorControllerTest {
         int value1 = 5;
         int value2 = 2;
 
-        when(simpleCalculator.add(value1, value2)).thenReturn(new CalculationResult());
+        when(simpleCalculator.add(value1, value2)).thenReturn(new CalculationResult(7.0, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
 
         this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
@@ -53,7 +56,7 @@ public class CalculatorControllerTest {
         int value1 = 5;
         int value2 = 2;
 
-        when(simpleCalculator.subtract(value1, value2)).thenReturn(new CalculationResult());
+        when(simpleCalculator.subtract(value1, value2)).thenReturn(new CalculationResult(3.0, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
 
         this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
@@ -71,7 +74,7 @@ public class CalculatorControllerTest {
         int value1 = 5;
         int value2 = 2;
 
-        when(simpleCalculator.multiply(value1, value2)).thenReturn(new CalculationResult());
+        when(simpleCalculator.multiply(value1, value2)).thenReturn(new CalculationResult(2.5, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
 
         this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
@@ -90,7 +93,7 @@ public class CalculatorControllerTest {
         int value2 = 2;
         Double result = 2.5;
 
-        when(simpleCalculator.divide(value1, value2)).thenReturn(new CalculationResult());
+        when(simpleCalculator.divide(value1, value2)).thenReturn(new CalculationResult(result, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
 
         this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
