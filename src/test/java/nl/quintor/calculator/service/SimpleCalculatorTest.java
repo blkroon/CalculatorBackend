@@ -1,6 +1,7 @@
 package nl.quintor.calculator.service;
 
 import nl.quintor.calculator.controller.exception.InvalidCalculation;
+import nl.quintor.calculator.model.CalculationAction;
 import nl.quintor.calculator.model.CalculationResult;
 import nl.quintor.calculator.repository.CalculationResultRepository;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -87,5 +93,18 @@ public class SimpleCalculatorTest {
         int value2 = 0;
 
         assertThrows(InvalidCalculation.class, () -> simpleCalculator.divide(value1, value2));
+    }
+
+    @Test
+    void getHistoryTest() {
+        List<CalculationResult> mockList = new ArrayList<>();
+        mockList.add(new CalculationResult(1, 2, 1, 1, CalculationAction.ADD, LocalDateTime.now()));
+        mockList.add(new CalculationResult(1, 1, 2, 1, CalculationAction.SUBTRACT, LocalDateTime.now()));
+
+        when(calculationResultRepository.findAll(Sort.by(Sort.Direction.DESC, "timeOfCalculation"))).thenReturn(mockList);
+
+        List<CalculationResult> result = simpleCalculator.getHistory();
+
+        assertThat(result, is(mockList));
     }
 }

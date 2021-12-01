@@ -5,9 +5,11 @@ import nl.quintor.calculator.controller.exception.InvalidCalculation;
 import nl.quintor.calculator.model.CalculationAction;
 import nl.quintor.calculator.model.CalculationResult;
 import nl.quintor.calculator.repository.CalculationResultRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +42,10 @@ public class SimpleCalculator {
         double result = (double) value1 / (double) value2;
         save(result, value1, value2, CalculationAction.DIVIDE);
         return result;
+    }
+
+    public List<CalculationResult> getHistory() {
+        return calculationResultRepository.findAll(Sort.by(Sort.Direction.DESC, "timeOfCalculation"));
     }
 
     private void save(double result, int value1, int value2, CalculationAction action) {
