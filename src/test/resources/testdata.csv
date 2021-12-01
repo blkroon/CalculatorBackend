@@ -1,0 +1,5 @@
+value1,value2,result,operation
+2.0,2.0,4.0,ADD
+4.0,2.0,2.0,SUBTRACT
+2.0,2.0,4.0,MULTIPLY
+4.0,2.0,2.0,DIVIDE

@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import nl.quintor.calculator.controller.dto.CalculationResultDTO;
 import nl.quintor.calculator.controller.exception.InvalidCalculation;
-import nl.quintor.calculator.model.CalculationAction;
+import nl.quintor.calculator.model.CalculationOperation;
 import nl.quintor.calculator.model.CalculationResult;
-import nl.quintor.calculator.service.SimpleCalculator;
+import nl.quintor.calculator.service.CalculatorService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,83 +37,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CalculatorControllerTest {
 
     @MockBean
-    private SimpleCalculator simpleCalculator;
+    private CalculatorService calculatorService;
     @InjectMocks
     private CalculatorController calculatorController;
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void calculate_addTest() throws Exception {
-        int value1 = 5;
-        int value2 = 2;
+    @ParameterizedTest
+    @CsvFileSource(resources = "/testdata.csv", numLinesToSkip = 1)
+    void calculateParamTest(double value1, double value2, double result, CalculationOperation operation) throws Exception {
 
-        when(simpleCalculator.add(value1, value2)).thenReturn(new CalculationResult(7.0, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
-
-        this.mockMvc.perform(post("/calculate")
-                        .contentType(MediaType.APPLICATION_JSON).content("{\n" +
-                                "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + ",\n" +
-                                "    \"action\": \"" + CalculationAction.ADD + "\"\n" +
-                                "}")).andExpect(status().isOk())
-                .andReturn().getResponse();
-
-        verify(simpleCalculator, times(1)).add(value1, value2);
-    }
-
-    @Test
-    void calculate_subtractTest() throws Exception {
-        int value1 = 5;
-        int value2 = 2;
-
-        when(simpleCalculator.subtract(value1, value2)).thenReturn(new CalculationResult(3.0, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
+        when(calculatorService.calculate(value1, value2, operation)).thenReturn(new CalculationResult(result, value1, value2, operation, LocalDateTime.now()));
 
         this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
                                 "    \"value1\": " + value1 + ",\n" +
                                 "    \"value2\": " + value2 + ",\n" +
-                                "    \"action\": \"" + CalculationAction.SUBTRACT + "\"\n" +
+                                "    \"operation\": \"" + operation.name() + "\"\n" +
                                 "}")).andExpect(status().isOk())
                 .andReturn().getResponse();
 
-        verify(simpleCalculator, times(1)).subtract(value1, value2);
-    }
-
-    @Test
-    void calculate_multiplyTest() throws Exception {
-        int value1 = 5;
-        int value2 = 2;
-
-        when(simpleCalculator.multiply(value1, value2)).thenReturn(new CalculationResult(2.5, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
-
-        this.mockMvc.perform(post("/calculate")
-                        .contentType(MediaType.APPLICATION_JSON).content("{\n" +
-                                "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + ",\n" +
-                                "    \"action\": \"" + CalculationAction.MULTIPLY + "\"\n" +
-                                "}")).andExpect(status().isOk())
-                .andReturn().getResponse();
-
-        verify(simpleCalculator, times(1)).multiply(value1, value2);
-    }
-
-    @Test
-    void calculate_divideTest() throws Exception {
-        int value1 = 5;
-        int value2 = 2;
-        double result = 2.5;
-
-        when(simpleCalculator.divide(value1, value2)).thenReturn(new CalculationResult(result, value1, value2, CalculationAction.DIVIDE, LocalDateTime.now()));
-
-        this.mockMvc.perform(post("/calculate")
-                        .contentType(MediaType.APPLICATION_JSON).content("{\n" +
-                                "    \"value1\": " + value1 + ",\n" +
-                                "    \"value2\": " + value2 + ",\n" +
-                                "    \"action\": \"" + CalculationAction.DIVIDE + "\"\n" +
-                                "}")).andExpect(status().isOk())
-                .andReturn().getResponse();
-
-        verify(simpleCalculator, times(1)).divide(value1, value2);
+        verify(calculatorService, times(1)).calculate(value1, value2, operation);
     }
 
     @Test
@@ -119,26 +65,26 @@ public class CalculatorControllerTest {
         int value1 = 5;
         int value2 = 2;
 
-        when(simpleCalculator.divide(value1, value2)).thenThrow(new InvalidCalculation("Cannot divide by zero"));
+        when(calculatorService.calculate(value1, value2, CalculationOperation.DIVIDE)).thenThrow(new InvalidCalculation("Can not divide by zero"));
 
         this.mockMvc.perform(post("/calculate")
                         .contentType(MediaType.APPLICATION_JSON).content("{\n" +
                                 "    \"value1\": " + value1 + ",\n" +
                                 "    \"value2\": " + value2 + ",\n" +
-                                "    \"action\": \"" + CalculationAction.DIVIDE + "\"\n" +
+                                "    \"operation\": \"" + CalculationOperation.DIVIDE + "\"\n" +
                                 "}")).andExpect(status().isBadRequest())
                 .andReturn().getResponse();
 
-        verify(simpleCalculator, times(1)).divide(value1, value2);
+        verify(calculatorService, times(1)).calculate(value1, value2, CalculationOperation.DIVIDE);
     }
 
     @Test
     void getHistoryTest() throws Exception {
         List<CalculationResult> mockList = new ArrayList<>();
-        mockList.add(new CalculationResult(1, 2, 1, 1, CalculationAction.ADD, LocalDateTime.now()));
-        mockList.add(new CalculationResult(1, 1, 2, 1, CalculationAction.SUBTRACT, LocalDateTime.now()));
+        mockList.add(new CalculationResult(1, 2, 1, 1, CalculationOperation.ADD, LocalDateTime.now()));
+        mockList.add(new CalculationResult(1, 1, 2, 1, CalculationOperation.SUBTRACT, LocalDateTime.now()));
 
-        when(simpleCalculator.getHistory()).thenReturn(mockList);
+        when(calculatorService.getHistory()).thenReturn(mockList);
 
         var response = this.mockMvc.perform(get("/calculate")).andExpect(status().isOk())
                 .andReturn().getResponse();

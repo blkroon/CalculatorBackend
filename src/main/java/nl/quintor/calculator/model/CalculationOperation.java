@@ -1,5 +1,5 @@
 package nl.quintor.calculator.model;
 
-public enum CalculationAction {
+public enum CalculationOperation {
     ADD, SUBTRACT, MULTIPLY, DIVIDE
 }

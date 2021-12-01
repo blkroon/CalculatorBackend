@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.quintor.calculator.controller.dto.CalculateDTO;
 import nl.quintor.calculator.controller.dto.CalculationResultDTO;
-import nl.quintor.calculator.model.CalculationAction;
+import nl.quintor.calculator.model.CalculationOperation;
 import nl.quintor.calculator.model.CalculationResult;
-import nl.quintor.calculator.service.SimpleCalculator;
+import nl.quintor.calculator.service.CalculatorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,30 +24,17 @@ import java.util.List;
 @Slf4j
 public class CalculatorController {
 
-    private SimpleCalculator simpleCalculator;
+    private CalculatorService calculatorService;
 
     @PostMapping
     public ResponseEntity<CalculationResultDTO> calculate(@Valid @RequestBody CalculateDTO values) {
-        int value1 = values.getValue1();
-        int value2 = values.getValue2();
-        CalculationAction action = values.getAction();
-        log.info("Calculate called with {}, {} and action {}", value1, value2, action.name());
+        double value1 = values.getValue1();
+        double value2 = values.getValue2();
+        CalculationOperation operation = values.getOperation();
+        log.info("Calculate called with {}, {} and operation {}", value1, value2, operation.name());
 
-        CalculationResult result = null;
-        switch (action) {
-            case ADD:
-                result = simpleCalculator.add(value1, value2);
-                break;
-            case SUBTRACT:
-                result = simpleCalculator.subtract(value1, value2);
-                break;
-            case MULTIPLY:
-                result = simpleCalculator.multiply(value1, value2);
-                break;
-            case DIVIDE:
-                result = simpleCalculator.divide(value1, value2);
-                break;
-        }
+        CalculationResult result = calculatorService.calculate(value1, value2, operation);
+
         log.info("Result is {}", result.getResult());
         return ResponseEntity.ok(new CalculationResultDTO(result));
     }
@@ -56,7 +43,7 @@ public class CalculatorController {
     public ResponseEntity<List<CalculationResultDTO>> getHistory() {
         log.info("Accessing historic calculation data");
         List<CalculationResultDTO> result = new ArrayList<>();
-        simpleCalculator.getHistory().forEach(r -> result.add(new CalculationResultDTO(r)));
+        calculatorService.getHistory().forEach(r -> result.add(new CalculationResultDTO(r)));
         return ResponseEntity.ok(result);
     }
 }

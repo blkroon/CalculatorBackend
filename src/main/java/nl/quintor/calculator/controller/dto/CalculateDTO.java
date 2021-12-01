@@ -1,16 +1,16 @@
 package nl.quintor.calculator.controller.dto;
 
 import lombok.Data;
-import nl.quintor.calculator.model.CalculationAction;
+import nl.quintor.calculator.model.CalculationOperation;
 
 import javax.validation.constraints.NotNull;
 
 @Data
 public class CalculateDTO {
     @NotNull
-    private Integer value1;
+    private Double value1;
     @NotNull
-    private Integer value2;
+    private Double value2;
     @NotNull
-    private CalculationAction action;
+    private CalculationOperation operation;
 }

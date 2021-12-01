@@ -25,10 +25,10 @@ public class CalculationResult {
     private double value1;
     private double value2;
     @Enumerated
-    private CalculationAction action;
+    private CalculationOperation action;
     private LocalDateTime timeOfCalculation;
 
-    public CalculationResult(double result, int value1, int value2, CalculationAction action, LocalDateTime timeOfCalculation) {
+    public CalculationResult(double result, double value1, double value2, CalculationOperation action, LocalDateTime timeOfCalculation) {
         this.result = result;
         this.value1 = value1;
         this.value2 = value2;
