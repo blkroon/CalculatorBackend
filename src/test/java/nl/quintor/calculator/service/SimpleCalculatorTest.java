@@ -86,10 +86,6 @@ public class SimpleCalculatorTest {
         int value1 = 5;
         int value2 = 0;
 
-        when(calculationResultRepository.save(any())).thenReturn(new CalculationResult());
-
         assertThrows(InvalidCalculation.class, () -> simpleCalculator.divide(value1, value2));
-
-        verify(calculationResultRepository, times(1)).save(any());
     }
 }
