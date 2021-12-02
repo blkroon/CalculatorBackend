@@ -25,14 +25,14 @@ public class CalculationResult {
     private double value1;
     private double value2;
     @Enumerated
-    private CalculationOperation action;
+    private CalculationOperation operation;
     private LocalDateTime timeOfCalculation;
 
-    public CalculationResult(double result, double value1, double value2, CalculationOperation action, LocalDateTime timeOfCalculation) {
+    public CalculationResult(double result, double value1, double value2, CalculationOperation operation, LocalDateTime timeOfCalculation) {
         this.result = result;
         this.value1 = value1;
         this.value2 = value2;
-        this.action = action;
+        this.operation = operation;
         this.timeOfCalculation = timeOfCalculation;
     }
 }

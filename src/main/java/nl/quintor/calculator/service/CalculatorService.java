@@ -59,8 +59,8 @@ public class CalculatorService {
         return calculationResultRepository.findAll(Sort.by(Sort.Direction.DESC, "timeOfCalculation"));
     }
 
-    private CalculationResult save(double result, double value1, double value2, CalculationOperation action) {
-        CalculationResult calculationResult = new CalculationResult(result, value1, value2, action, LocalDateTime.now());
+    private CalculationResult save(double result, double value1, double value2, CalculationOperation operation) {
+        CalculationResult calculationResult = new CalculationResult(result, value1, value2, operation, LocalDateTime.now());
         return calculationResultRepository.save(calculationResult);
     }
 

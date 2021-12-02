@@ -44,7 +44,7 @@ public class CalculatorServiceTest {
         assertThat(actual.getResult(), is(result));
         assertThat(actual.getValue1(), is(value1));
         assertThat(actual.getValue2(), is(value2));
-        assertThat(actual.getAction(), is(operation));
+        assertThat(actual.getOperation(), is(operation));
 
         verify(calculationResultRepository, times(1)).save(any());
     }

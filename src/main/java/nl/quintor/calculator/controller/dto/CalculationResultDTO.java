@@ -20,7 +20,7 @@ public class CalculationResultDTO {
         this.value1 = calculationResult.getValue1();
         this.value2 = calculationResult.getValue2();
         this.result = calculationResult.getResult();
-        this.operation = calculationResult.getAction().name();
+        this.operation = calculationResult.getOperation().name();
         this.timeOfCalculation = calculationResult.getTimeOfCalculation();
     }
 }
