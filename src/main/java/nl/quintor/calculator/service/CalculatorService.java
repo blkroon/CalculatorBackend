@@ -18,8 +18,6 @@ public class CalculatorService {
     private CalculationResultRepository calculationResultRepository;
 
     public CalculationResult calculate(double value1, double value2, CalculationOperation operation) {
-//        Math.floor()
-        CalculationResult calculationResult;
         switch (operation) {
             case ADD:
                 return this.add(value1, value2);
@@ -36,17 +34,17 @@ public class CalculatorService {
 
     public CalculationResult add(double value1, double value2) {
         double result = value1 + value2;
-        return save((double) Math.round(result * 100) / 100, value1, value2, CalculationOperation.ADD);
+        return save(rounding(result), value1, value2, CalculationOperation.ADD);
     }
 
     public CalculationResult subtract(double value1, double value2) {
         double result = value1 - value2;
-        return save((double) Math.round(result * 100) / 100, value1, value2, CalculationOperation.SUBTRACT);
+        return save(rounding(result), value1, value2, CalculationOperation.SUBTRACT);
     }
 
     public CalculationResult multiply(double value1, double value2) {
         double result = value1 * value2;
-        return save((double) Math.round(result * 100) / 100, value1, value2, CalculationOperation.MULTIPLY);
+        return save(rounding(result), value1, value2, CalculationOperation.MULTIPLY);
     }
 
     public CalculationResult divide(double value1, double value2) {
@@ -54,7 +52,7 @@ public class CalculatorService {
             throw new InvalidCalculation("Can't divide by zero");
         }
         double result = value1 / value2;
-        return save(result, value1, value2, CalculationOperation.DIVIDE);
+        return save(rounding(result), value1, value2, CalculationOperation.DIVIDE);
     }
 
     public List<CalculationResult> getHistory() {
@@ -64,5 +62,9 @@ public class CalculatorService {
     private CalculationResult save(double result, double value1, double value2, CalculationOperation action) {
         CalculationResult calculationResult = new CalculationResult(result, value1, value2, action, LocalDateTime.now());
         return calculationResultRepository.save(calculationResult);
+    }
+
+    private double rounding(double value) {
+        return (double) Math.round(value * 100) / 100;
     }
 }
