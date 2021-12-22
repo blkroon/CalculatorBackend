@@ -8,6 +8,7 @@ import nl.quintor.calculator.model.CalculationOperation;
 import nl.quintor.calculator.model.CalculationResult;
 import nl.quintor.calculator.service.CalculatorService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class CalculatorController {
     private CalculatorService calculatorService;
 
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:8089")
     public ResponseEntity<CalculationResultDTO> calculate(@Valid @RequestBody CalculateDTO values) {
         double value1 = values.getValue1();
         double value2 = values.getValue2();
@@ -40,6 +42,7 @@ public class CalculatorController {
     }
 
     @GetMapping
+    @CrossOrigin(origins = "http://localhost:8089")
     public ResponseEntity<List<CalculationResultDTO>> getHistory() {
         log.info("Accessing historic calculation data");
         List<CalculationResultDTO> result = new ArrayList<>();
